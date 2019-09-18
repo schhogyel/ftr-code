@@ -16,11 +16,11 @@ function questionPrompt(question: any) {
   });
 }
 
+interface answerObj {
+  [key: string]: number;
+}
 //Store anwer in a object
 function storeAnswer() {
-  interface answerObj {
-    [key: string]: any;
-  }
   let answerObj: answerObj = {};
 
   function addAnswer(answer: string) {
@@ -34,9 +34,10 @@ function storeAnswer() {
 }
 
 //display answer on console
-function printAnswer(answer: any) {
+function printAnswer(answer: answerObj) {
   let answerArray = [];
-  for (let [key, value] of Object.entries(answer)) {
+  let filteredAnswer = Object.entries(answer).sort((a, b) => b[1] - a[1]);
+  for (let [key, value] of filteredAnswer) {
     answerArray.push(`${key}: ${value}`);
   }
   console.log(`>> ${answerArray.join(", ")}`);
@@ -104,9 +105,14 @@ async function main() {
     start(interval);
     timerStatus = "start";
     let answer = await questionPrompt(">> Please enter the first number\n");
-    addAnswer(answer);
+    // addAnswer(answer);
 
     while (answer) {
+      if (!Number.isNaN(Number(answer))) {
+        isFibonacci(Number(answer)) && console.log(">> FIB\n");
+        addAnswer(answer);
+      }
+
       if (answer === "quit") {
         console.log("Thanks for playing, Goodbye");
         process.exit(0);
@@ -122,10 +128,6 @@ async function main() {
         timerStatus = "start";
       } else {
         answer = await questionPrompt(">> Please enter the next number\n");
-        if (!Number.isNaN(Number(answer))) {
-          isFibonacci(Number(answer)) && console.log(">> FIB\n");
-          addAnswer(answer);
-        }
       }
     }
   }
