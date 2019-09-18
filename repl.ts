@@ -28,7 +28,7 @@ function storeAnswer() {
   }
 
   return {
-    answer: answerObj,
+    answerStore: answerObj,
     addAnswer: addAnswer
   };
 }
@@ -94,8 +94,8 @@ function isFibonacci(n: number) {
 async function main() {
   let timerStatus: "start" | "pause";
 
-  const { addAnswer, answer } = storeAnswer();
-  const { start, pause, resume } = timer(() => printAnswer(answer));
+  const { addAnswer, answerStore } = storeAnswer();
+  const { start, pause, resume } = timer(() => printAnswer(answerStore));
 
   const time = await questionPrompt(
     ">> Please input the number of time in seconds between emitting numbers and their frequency\n"
@@ -105,7 +105,6 @@ async function main() {
     start(interval);
     timerStatus = "start";
     let answer = await questionPrompt(">> Please enter the first number\n");
-    // addAnswer(answer);
 
     while (answer) {
       if (!Number.isNaN(Number(answer))) {
@@ -114,6 +113,7 @@ async function main() {
       }
 
       if (answer === "quit") {
+        printAnswer(answerStore);
         console.log("Thanks for playing, Goodbye");
         process.exit(0);
       } else if (timerStatus === "pause" && answer !== "resume") {
