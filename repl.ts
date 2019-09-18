@@ -10,10 +10,6 @@ function questionPrompt(question: any) {
 
   return new Promise<string>((resolve, error) => {
     rl.question(question, (answer: any) => {
-      if (answer === "exit") {
-        console.log("Thanks for playing, Goodbye");
-        process.exit(0);
-      }
       rl.close();
       resolve(answer);
     });
@@ -39,9 +35,11 @@ function storeAnswer() {
 
 //display answer on console
 function printAnswer(answer: any) {
+  let answerArray = [];
   for (let [key, value] of Object.entries(answer)) {
-    console.log(`${key}: ${value}`);
+    answerArray.push(`${key}: ${value}`);
   }
+  console.log(`>> ${answerArray.join(", ")}`);
 }
 
 //timer function with start and pause
@@ -109,7 +107,10 @@ async function main() {
     addAnswer(answer);
 
     while (answer) {
-      if (timerStatus === "pause" && answer !== "resume") {
+      if (answer === "quit") {
+        console.log("Thanks for playing, Goodbye");
+        process.exit(0);
+      } else if (timerStatus === "pause" && answer !== "resume") {
         answer = await questionPrompt(">> Please type Resume\n");
       } else if (typeof answer === "string" && answer.trim() === "halt") {
         pause();
@@ -122,7 +123,7 @@ async function main() {
       } else {
         answer = await questionPrompt(">> Please enter the next number\n");
         if (!Number.isNaN(Number(answer))) {
-          isFibonacci(Number(answer)) && console.log("FIB\n");
+          isFibonacci(Number(answer)) && console.log(">> FIB\n");
           addAnswer(answer);
         }
       }
